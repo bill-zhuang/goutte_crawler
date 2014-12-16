@@ -10,6 +10,9 @@ require_once '../library/goutte.phar';
 require_once 'Util.php';
 class Goutte_Crawl
 {
+    /**
+     * @var Goutte\Client
+     */
     private $_goutte_client;
     private $_goutte_crawler;
     private $_methods;
@@ -29,6 +32,12 @@ class Goutte_Crawl
         }
 
         $this->_goutte_crawler = $this->_goutte_client->request($method, $url);
+    }
+
+    public function getWholeHtmlPage()
+    {
+        $this->_isCrawlerInit();
+        return $this->_goutte_crawler->html();
     }
 
     public function getHtml($css_selector)
