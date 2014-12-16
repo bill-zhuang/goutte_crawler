@@ -77,8 +77,9 @@ class Goutte_Crawl
     public function getAttrByName($css_selector, $attr_name)
     {
         $this->_isCrawlerInit();
-        return $this->_goutte_crawler->filter($css_selector)->each(function ($node, $attr_name){
-            return $node->extract(array($attr_name));
+        return $this->_goutte_crawler->filter($css_selector)->each(function ($node) use($attr_name){
+            $attr_value = $node->extract(array($attr_name));
+            return isset($attr_value[0]) ? $attr_value[0] : '';
         });
     }
 
