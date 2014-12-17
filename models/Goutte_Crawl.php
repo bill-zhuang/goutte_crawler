@@ -56,6 +56,14 @@ class Goutte_Crawl
         });
     }
 
+    public function getTableTDText($css_selector, $td_num)
+    {
+        $this->_isCrawlerInit();
+        return $this->_goutte_crawler->filter($css_selector)->each(function ($node) use($td_num) {
+            return trim($node->filter('td')->eq($td_num)->text());
+        });
+    }
+
     public function getHrefAttr($css_selector)
     {
         $this->_isCrawlerInit();
