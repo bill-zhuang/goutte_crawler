@@ -59,16 +59,16 @@ class Pcbaby_Care
                     if (strpos($article_url, $needle) !== false)
                     {
                         $article_data = [
-                            'title' => $title,
-                            'type' => $crawl_key,
-                            'url' => $article_url,
-                            'status' => 1,
-                            'ctime' => date('Y-m-d H:i:s'),
-                            'utime' => date('Y-m-d H:i:s')
+                            'pca_title' => $title,
+                            'pca_type' => $crawl_key,
+                            'pca_url' => $article_url,
+                            'pca_status' => 1,
+                            'pca_create_time' => date('Y-m-d H:i:s'),
+                            'pca_update_time' => date('Y-m-d H:i:s')
                         ];
 
-                        $pcaid = $this->_adapter_db->insert($this->_table_names['article'], $article_data);
-                        if ($pcaid > 0)
+                        $pca_id = $this->_adapter_db->insert($this->_table_names['article'], $article_data);
+                        if ($pca_id > 0)
                         {
                             $article_content = $this->_getArticleDetail($article_url);
                             if ($article_content['content'] == '')
@@ -77,13 +77,13 @@ class Pcbaby_Care
                                 $article_content = $this->_getArticleDetail($article_url, false);
                             }
                             $article_content_data = [
-                                'pcaid' => $pcaid,
-                                'title' => $title,
-                                'content' => $article_content['content'],
-                                'tag' => implode(',', $article_content['tags']),
-                                'status' => 1,
-                                'ctime' => date('Y-m-d H:i:s'),
-                                'utime' => date('Y-m-d H:i:s')
+                                'pca_id' => $pca_id,
+                                'pcac_title' => $title,
+                                'pcac_content' => $article_content['content'],
+                                'pcac_tag' => implode(',', $article_content['tags']),
+                                'pcac_status' => 1,
+                                'pcac_create_time' => date('Y-m-d H:i:s'),
+                                'pcac_update_time' => date('Y-m-d H:i:s')
                             ];
                             $this->_adapter_db->insert($this->_table_names['content'], $article_content_data);
                         }

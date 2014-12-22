@@ -59,16 +59,16 @@ class Pcbaby_Disease
                     if (strpos($article_url, $needle) !== false)
                     {
                         $article_data = [
-                            'title' => $title,
-                            'type' => $crawl_key,
-                            'url' => $article_url,
-                            'status' => 1,
-                            'ctime' => date('Y-m-d H:i:s'),
-                            'utime' => date('Y-m-d H:i:s')
+                            'pda_title' => $title,
+                            'pda_type' => $crawl_key,
+                            'pda_url' => $article_url,
+                            'pda_status' => 1,
+                            'pda_create_time' => date('Y-m-d H:i:s'),
+                            'pda_update_time' => date('Y-m-d H:i:s')
                         ];
 
-                        $pdaid = $this->_adapter_db->insert($this->_table_names['article'], $article_data);
-                        if ($pdaid > 0)
+                        $pda_id = $this->_adapter_db->insert($this->_table_names['article'], $article_data);
+                        if ($pda_id > 0)
                         {
                             $article_content = $this->_getArticleDetail($article_url);
                             if ($article_content['content'] == '')
@@ -77,13 +77,13 @@ class Pcbaby_Disease
                                 $article_content = $this->_getArticleDetail($article_url, false);
                             }
                             $article_content_data = [
-                                'pdaid' => $pdaid,
-                                'title' => $title,
-                                'content' => $article_content['content'],
-                                'tag' => implode(',', $article_content['tags']),
-                                'status' => 1,
-                                'ctime' => date('Y-m-d H:i:s'),
-                                'utime' => date('Y-m-d H:i:s')
+                                'pda_id' => $pda_id,
+                                'pdac_title' => $title,
+                                'pdac_content' => $article_content['content'],
+                                'pdac_tag' => implode(',', $article_content['tags']),
+                                'pdac_status' => 1,
+                                'pdac_create_time' => date('Y-m-d H:i:s'),
+                                'pdac_update_time' => date('Y-m-d H:i:s')
                             ];
                             $this->_adapter_db->insert($this->_table_names['content'], $article_content_data);
                         }
