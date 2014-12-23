@@ -45,13 +45,12 @@ class DBTableFactory
 
     /**
      * @param $table_name
-     * @param $columns
      * @param array $where format: [key[type(>/>=/</<=/!=/=/...)] => value, ...]
      * @return array|bool
      */
-    public function selectCount($table_name, $columns, array $where)
+    public function selectCount($table_name, array $where)
     {
-        return $this->_adapter_db->count($table_name, $columns, $where);
+        return $this->_adapter_db->count($table_name, null, null, $where);
     }
 
     public function insert($table_name, array $data)
