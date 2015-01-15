@@ -6,6 +6,37 @@
  * Time: 上午10:28
  */
 
+/*
+ * more detail, see http://medoo.in/api/where.
+ * where clause
+ * ['email' => 'example@example.com']
+ * ['email[!=]' => 'example@example.com']
+ * ['age[><]' => [200, 500]]
+ * [
+ *      'AND' => [
+ *          'user_id' => [2, 123, 234, 54],
+ *          'email' => ['example1@example.com', 'example2@example.com', 'example3@example.com']
+*       ]
+ * ]
+ * ['name[~]' => 'bill'] //equal to name like %bill%
+ * ['name[!~]' => 'bill'] //equal to name not like %bill%
+ * ['name[~]' => 'bill%'] //equal to name like bill%
+ *
+ * order clause
+ * ['ORDER' => 'age'] //equal to order by age desc
+ * ['ORDER' => ['user_name DESC', 'user_id ASC']]
+ *
+ * group & having clause
+ * ['GROUP' => 'type']
+ * ['HAVING' => [
+ *       "user_id[>]" => 500
+ *      ]
+ * ]
+ *
+ * limit clause
+ * ['LIMIT' => [20, 100]]
+ */
+
 require_once '../library/medoo.php';
 class DBTableFactory
 {
