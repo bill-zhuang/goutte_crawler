@@ -1,0 +1,10 @@
+{
+	"name": "bill/crawl-website",
+    "description": "A crawler of websites based on goutte & medoo",
+	"type": "project",
+    "license": "Apache-2.0",
+	"require": {
+		"fabpot/goutte": "*",
+		"catfan/medoo": "*"
+	}
+}
