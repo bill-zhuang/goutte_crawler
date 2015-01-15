@@ -6,30 +6,13 @@
  * Time: 下午4:19
  */
 
-require_once '../models/Goutte_Crawl.php';
-require_once '../models/DBTableFactory.php';
-class Ttpet
+require_once 'Crawl_Base.php';
+class Ttpet extends Crawl_Base
 {
-    /**
-     * @var Goutte_Crawl
-     */
-    private $_adapter_goutte;
-    /**
-     * @var DBTableFactory
-     */
-    private $_adapter_db;
-    private $_crawl_urls;
-    private $_table_names;
-
     public function __construct()
     {
-        set_time_limit(0);
-        $this->_adapter_goutte = new Goutte_Crawl();
-        $this->_adapter_db = new DBTableFactory();
-        $this->_crawl_urls = [
-
-        ];
-        $this->_table_names = [
+        parent::__construct();
+        $this->table_names = [
             'main_category' => 'ttpet_main_category',
             'sub_category' => 'ttpet_sub_category',
             'pet' => 'ttpet_pet',
@@ -64,7 +47,7 @@ class Ttpet
                 $main_category_data = [
                     'tmc_name' => $category_value
                 ];
-                $this->_adapter_db->insert($this->_table_names['main_category'], $main_category_data);
+                $this->adapter_db->insert($this->table_names['main_category'], $main_category_data);
                 foreach ($special_data['content'] as $content_key => $content_value)
                 {
                     if ($content_key >= $key_map[$category_key]['start'] && $content_key <= $key_map[$category_key]['end'])
@@ -74,7 +57,7 @@ class Ttpet
                             'tsc_name' => $content_value,
                             'tsc_url' => $special_data['url'][$content_key]
                         ];
-                        $this->_adapter_db->insert($this->_table_names['sub_category'], $sub_category_data);
+                        $this->adapter_db->insert($this->table_names['sub_category'], $sub_category_data);
                         $total_page = 1;
                         $total_data = $this->_getSubcategoryPageNum($special_data['url'][$content_key]);
                         if (!empty($total_data))
@@ -93,7 +76,7 @@ class Ttpet
                                 'tp_name' => $pet_value['name'],
                                 'tp_url' => $pet_value['url']
                             ];
-                            $this->_adapter_db->insert($this->_table_names['pet'], $pet_data);
+                            $this->adapter_db->insert($this->table_names['pet'], $pet_data);
                             $pet_info = $this->_getPetInfo($pet_value['url']);
                             //pet detail
                             if (!empty($pet_info))
@@ -106,7 +89,7 @@ class Ttpet
                                     'tpi_url' => $pet_value['url'],
                                     'tpi_intro' => isset($pet_info[0]) ? $pet_info[0] : ''
                                 ];
-                                $this->_adapter_db->insert($this->_table_names['pet_info'], $pet_info_data);
+                                $this->adapter_db->insert($this->table_names['pet_info'], $pet_info_data);
                             }
                         }*/
                     }
@@ -121,10 +104,10 @@ class Ttpet
         $category_xpath = 'div.zxmenu dl dt a';
         $content_xpath = 'div.zxmenu dl dd a';
         $url_xpath = 'div.zxmenu dl dd a';
-        $this->_adapter_goutte->sendRequest($url);
-        $category_content = $this->_adapter_goutte->getText($category_xpath);
-        $content_content = $this->_adapter_goutte->getText($content_xpath);
-        $url_content = $this->_adapter_goutte->getHrefAttr($url_xpath);
+        $this->adapter_goutte->sendRequest($url);
+        $category_content = $this->adapter_goutte->getText($category_xpath);
+        $content_content = $this->adapter_goutte->getText($content_xpath);
+        $url_content = $this->adapter_goutte->getHrefAttr($url_xpath);
         $url_content = array_map(
             function($url) {
                 if (isset($url)) {
@@ -148,8 +131,8 @@ class Ttpet
     private function _getSubcategoryPageNum($url)
     {
         $page_xpath = 'div.wo_page a.last';
-        $this->_adapter_goutte->sendRequest($url);
-        $page_content = $this->_adapter_goutte->getText($page_xpath);
+        $this->adapter_goutte->sendRequest($url);
+        $page_content = $this->adapter_goutte->getText($page_xpath);
         $page_content = array_map(
             function($content) {
                 return str_replace('.', '', $content);
@@ -171,15 +154,15 @@ class Ttpet
             if ($i != 1)
             {
                 $visit_url = str_replace('.html', '-' . $i . '.html', $url);
-                $this->_adapter_goutte->sendRequest($visit_url);
+                $this->adapter_goutte->sendRequest($visit_url);
             }
 
             $all_pet_data = [
                 'name' => '',
                 'url' => ''
             ];
-            $all_pet_data['name'] = $this->_adapter_goutte->getText($pet_name_xpath);
-            $all_pet_data['url'] = $this->_adapter_goutte->getHrefAttr($pet_name_xpath);//print_r($all_pet_data);exit;
+            $all_pet_data['name'] = $this->adapter_goutte->getText($pet_name_xpath);
+            $all_pet_data['url'] = $this->adapter_goutte->getHrefAttr($pet_name_xpath);//print_r($all_pet_data);exit;
             $all_pet_data['url'] = array_map(
                 function($url) {
                     if ($url != '') {
@@ -201,7 +184,7 @@ class Ttpet
                     'tp_name' => $pet_name,
                     'tp_url' => $all_pet_data['url'][$pet_key]
                 ];
-                $this->_adapter_db->insert($this->_table_names['pet'], $pet_data);
+                $this->adapter_db->insert($this->table_names['pet'], $pet_data);
                 $pet_info = $this->_getPetInfo($all_pet_data['url'][$pet_key]);
                 //pet detail
                 if (!empty($pet_info))
@@ -214,7 +197,7 @@ class Ttpet
                         'tpi_url' => $all_pet_data['url'][$pet_key],
                         'tpi_intro' => isset($pet_info[0]) ? $pet_info[0] : ''
                     ];
-                    $this->_adapter_db->insert($this->_table_names['pet_info'], $pet_info_data);
+                    $this->adapter_db->insert($this->table_names['pet_info'], $pet_info_data);
                 }
             }
         }
@@ -226,8 +209,8 @@ class Ttpet
     private function _getPetInfo($pet_url)
     {
         $detail_xpath = 'div.p_pad div.p_text';
-        $this->_adapter_goutte->sendRequest($pet_url);
-        $data = $this->_adapter_goutte->getHtml($detail_xpath);
+        $this->adapter_goutte->sendRequest($pet_url);
+        $data = $this->adapter_goutte->getHtml($detail_xpath);
         /*print_r($data);
         exit;*/
 

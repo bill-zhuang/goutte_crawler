@@ -6,30 +6,13 @@
  * Time: 下午4:03
  */
 
-require_once '../models/Goutte_Crawl.php';
-require_once '../models/DBTableFactory.php';
-class Boqqi
+require_once 'Crawl_Base.php';
+class Boqqi extends Crawl_Base
 {
-    /**
-     * @var Goutte_Crawl
-     */
-    private $_adapter_goutte;
-    /**
-     * @var DBTableFactory
-     */
-    private $_adapter_db;
-    private $_crawl_urls;
-    private $_table_names;
-
     public function __construct()
     {
-        set_time_limit(0);
-        $this->_adapter_goutte = new Goutte_Crawl();
-        $this->_adapter_db = new DBTableFactory();
-        $this->_crawl_urls = [
-
-        ];
-        $this->_table_names = [
+        parent::__construct();
+        $this->table_names = [
             'city' => 'boqqi_city',
             'district' => 'boqqi_district',
             'institution' => 'boqqi_institution',
@@ -51,7 +34,7 @@ class Boqqi
                 'bc_name' => $city_name,
                 'bc_url' => $all_city_data['url'][$city_key]
             ];
-            $this->_adapter_db->insert($this->_table_names['city'], $city_data);
+            $this->adapter_db->insert($this->table_names['city'], $city_data);
             $district_category_data = $this->_getDistrictAndCategory($all_city_data['url'][$city_key]);
             //
             $category_ids = [];
@@ -72,7 +55,7 @@ class Boqqi
                     'bd_city' => $city_name,
                     'bd_url' => $district_value['url']
                 ];
-                $this->_adapter_db->insert($this->_table_names['district'], $district_data);
+                $this->adapter_db->insert($this->table_names['district'], $district_data);
 
                 if (!empty($category_ids))
                 {
@@ -97,7 +80,7 @@ class Boqqi
                                     'bi_name' => $institution_name,
                                     'bi_url' => $all_institution_data['url'][$institution_key]
                                 ];
-                                $this->_adapter_db->insert($this->_table_names['institution'], $institution_data);
+                                $this->adapter_db->insert($this->table_names['institution'], $institution_data);
                                 $institution_info = $this->_getInstitutionInfo($all_institution_data['url'][$institution_key]);
                                 //address phone detail
                                 if (!empty($institution_info))
@@ -115,7 +98,7 @@ class Boqqi
                                         'bii_intro' => isset($institution_info['detail'][0]) ? $institution_info['detail'][0] : '',
                                         'bii_logo' => isset($institution_info['logo'][0]) ? $institution_info['logo'][0] : ''
                                     ];
-                                    $this->_adapter_db->insert($this->_table_names['institution_info'], $institution_info_data);
+                                    $this->adapter_db->insert($this->table_names['institution_info'], $institution_info_data);
                                 }
                             }
                         }
@@ -141,7 +124,7 @@ class Boqqi
                                 'bi_name' => $institution_name,
                                 'bi_url' => $all_institution_data['url'][$institution_key]
                             ];
-                            $this->_adapter_db->insert($this->_table_names['institution'], $institution_data);
+                            $this->adapter_db->insert($this->table_names['institution'], $institution_data);
                             $institution_info = $this->_getInstitutionInfo($all_institution_data['url'][$institution_key]);
                             //address phone detail
                             if (!empty($institution_info))
@@ -159,7 +142,7 @@ class Boqqi
                                     'bii_intro' => isset($institution_info['detail'][0]) ? $institution_info['detail'][0] : '',
                                     'bii_logo' => isset($institution_info['logo'][0]) ? $institution_info['logo'][0] : ''
                                 ];
-                                $this->_adapter_db->insert($this->_table_names['institution_info'], $institution_info_data);
+                                $this->adapter_db->insert($this->table_names['institution_info'], $institution_info_data);
                             }
                         }
                     }
@@ -172,13 +155,13 @@ class Boqqi
     {
         $url = 'http://vet.boqii.com/hospital/list.html';
         $city_xpath = 'div.city_area a';
-        $this->_adapter_goutte->sendRequest($url);
+        $this->adapter_goutte->sendRequest($url);
         $data_content = [
             'name' => '',
             'url' => ''
         ];
-        $data_content['name'] = $this->_adapter_goutte->getText($city_xpath);
-        $data_content['url'] = $this->_adapter_goutte->getHrefAttr($city_xpath);
+        $data_content['name'] = $this->adapter_goutte->getText($city_xpath);
+        $data_content['url'] = $this->adapter_goutte->getHrefAttr($city_xpath);
         $data_content['url'] = array_map(
             function($url) {
                 if ($url[0] != '') {
@@ -196,13 +179,13 @@ class Boqqi
     private function _getDistrictAndCategory($url)
     {
         $district_xpath = 'div.leftBA dl dd a';
-        $this->_adapter_goutte->sendRequest($url);
+        $this->adapter_goutte->sendRequest($url);
         $all_data_content = [
             'name' => '',
             'url' => ''
         ];
-        $all_data_content['name'] = $this->_adapter_goutte->getText($district_xpath);
-        $all_data_content['url'] = $this->_adapter_goutte->getHrefAttr($district_xpath);
+        $all_data_content['name'] = $this->adapter_goutte->getText($district_xpath);
+        $all_data_content['url'] = $this->adapter_goutte->getHrefAttr($district_xpath);
         $all_data_content['name'] = array_map(
             function($name) {
                 return preg_replace('/\d+/', '', trim($name));
@@ -271,8 +254,8 @@ class Boqqi
     private function _getInstitutionPageNum($url)
     {
         $page_xpath = 'div.showpage a';
-        $this->_adapter_goutte->sendRequest($url);
-        $page_content = $this->_adapter_goutte->getText($page_xpath);
+        $this->adapter_goutte->sendRequest($url);
+        $page_content = $this->adapter_goutte->getText($page_xpath);
         /*print_r($page_content);
         exit;*/
 
@@ -291,11 +274,11 @@ class Boqqi
             if ($i != 1)
             {
                 $actual_url = str_replace('.html', '-' . $i . '.html', $url);
-                $this->_adapter_goutte->sendRequest($actual_url);
+                $this->adapter_goutte->sendRequest($actual_url);
             }
 
-            $institution_data['name'] = $this->_adapter_goutte->getText($institution_name_xpath);
-            $institution_data['url'] = $this->_adapter_goutte->getHrefAttr($institution_name_xpath);
+            $institution_data['name'] = $this->adapter_goutte->getText($institution_name_xpath);
+            $institution_data['url'] = $this->adapter_goutte->getHrefAttr($institution_name_xpath);
             /*print_r(array_filter($institution_data));
             exit;*/
 
@@ -310,7 +293,7 @@ class Boqqi
         $info_xpath = 'div.det_rbox dl';
         $detail_xpath = 'div.detB_con p';
         $logo_xpath = 'div.det_img img';
-        $this->_adapter_goutte->sendRequest($url);
+        $this->adapter_goutte->sendRequest($url);
         $data = [
             'address' => '',
             'phone' => '',
@@ -319,14 +302,14 @@ class Boqqi
             'detail' => '',
             'logo' => ''
         ];
-        $info = $this->_adapter_goutte->getText($info_xpath);
+        $info = $this->adapter_goutte->getText($info_xpath);
         list(, $data['address']) = explode('：', $info[1]);
         list(, $data['phone']) = explode('：', $info[2]);
         list(, $data['opentime']) = explode('：', $info[4]);
         list(, $data['tags']) = explode('：', $info[5]);
 
-        $data['detail'] = $this->_adapter_goutte->getText($detail_xpath);
-        $data['logo'] = $this->_adapter_goutte->getImageSrcAttr($logo_xpath);
+        $data['detail'] = $this->adapter_goutte->getText($detail_xpath);
+        $data['logo'] = $this->adapter_goutte->getImageSrcAttr($logo_xpath);
         /*print_r($data);
         exit;*/
 

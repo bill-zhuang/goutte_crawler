@@ -56,5 +56,5 @@ CREATE TABLE `izaojiao_branch` (
   `ib_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `ib_name` varchar(255) NOT NULL DEFAULT '',
   `ib_url` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`ip_id`)
+  PRIMARY KEY (`ib_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

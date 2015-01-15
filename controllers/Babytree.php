@@ -6,29 +6,16 @@
  * Time: 下午2:52
  */
 
-require_once '../models/Goutte_Crawl.php';
-require_once '../models/DBTableFactory.php';
-class Babytree
+require_once 'Crawl_Base.php';
+class Babytree extends Crawl_Base
 {
-    /**
-     * @var Goutte_Crawl
-     */
-    private $_adapter_goutte;
-    /**
-     * @var DBTableFactory
-     */
-    private $_adapter_db;
-    private $_crawl_urls;
-    private $_table_names;
-
     public function __construct()
     {
-        $this->_adapter_goutte = new Goutte_Crawl();
-        $this->_adapter_db = new DBTableFactory();
-        $this->_crawl_urls = [
+        parent::__construct();
+        $this->crawl_urls = [
             'http://www.babytree.com/community/hospital.php'
         ];
-        $this->_table_names = [
+        $this->table_names = [
             'province' => 'babytree_province',
             'city' => 'babytree_city',
             'hospital' => 'babytree_hospital',
@@ -46,7 +33,7 @@ class Babytree
         $hospital_css_selector = 'div#agegroup div.hospital-full-list div.list-body dl dd ul li a';
         $hospital_info_css_selector = 'div#group-information div.hospital-detail-more table tbody tr td';
 
-        $this->_goutte_crawler = $this->_adapter_goutte->sendRequest($this->_crawl_urls[0]);
+        $this->_goutte_crawler = $this->adapter_goutte->sendRequest($this->crawl_urls[0]);
         $provinces = $this->_getProvinces();
         if (!empty($provinces))
         {
@@ -61,7 +48,7 @@ class Babytree
                     'bp_province_id' => $province_key,
                     'bp_name' => $province['name']
                 ];
-                $this->_adapter_db->insert($this->_table_names['province'], $province_data);
+                $this->adapter_db->insert($this->table_names['province'], $province_data);
                 foreach ($province['list'] as $city_key => $city)
                 {
                     $city_data = [
@@ -69,12 +56,12 @@ class Babytree
                         'bc_city_id' => $city_key,
                         'bc_name' => $city
                     ];
-                    $this->_adapter_db->insert($this->_table_names['city'], $city_data);
+                    $this->adapter_db->insert($this->table_names['city'], $city_data);
 
-                    $city_hospital_url = $this->_crawl_urls[0] . '?loc=' . $city_key;
-                    $this->_adapter_goutte->sendRequest($city_hospital_url);
-                    $hospital_names = $this->_adapter_goutte->getText($hospital_css_selector);
-                    $hospital_urls = $this->_adapter_goutte->getHrefAttr($hospital_css_selector);
+                    $city_hospital_url = $this->crawl_urls[0] . '?loc=' . $city_key;
+                    $this->adapter_goutte->sendRequest($city_hospital_url);
+                    $hospital_names = $this->adapter_goutte->getText($hospital_css_selector);
+                    $hospital_urls = $this->adapter_goutte->getHrefAttr($hospital_css_selector);
                     foreach ($hospital_names as $hospital_key => $hospital_name)
                     {
                         $hospital_name = preg_replace('/\(.+/', '', $hospital_name);
@@ -85,11 +72,11 @@ class Babytree
                             'bh_url' => $hospital_urls[$hospital_key],
                             'bh_status' => 1
                         ];
-                        $this->_adapter_db->insert($this->_table_names['hospital'], $hospital_data);
-                        $this->_adapter_goutte->sendRequest($hospital_urls[$hospital_key]);
+                        $this->adapter_db->insert($this->table_names['hospital'], $hospital_data);
+                        $this->adapter_goutte->sendRequest($hospital_urls[$hospital_key]);
 
                         //hospital information
-                        $hospital_content = $this->_adapter_goutte->getText($hospital_info_css_selector);
+                        $hospital_content = $this->adapter_goutte->getText($hospital_info_css_selector);
                         $hospital_address = isset($hospital_content[0]) ?
                             mb_substr($hospital_content[0], 0, mb_strlen($hospital_content[0], 'utf-8') - 4, 'utf-8') : '';
                         $hospital_phone = isset($hospital_content[1]) ?
@@ -106,7 +93,7 @@ class Babytree
                             'bhi_intro' => $hospital_intro,
                             'bhi_status' => 1,
                         ];
-                        $this->_adapter_db->insert($this->_table_names['hospital_info'], $hospital_info_data);
+                        $this->adapter_db->insert($this->table_names['hospital_info'], $hospital_info_data);
                     }
                     //print_r($hospital_names);print_r($hospital_urls);exit;
                 }
@@ -119,7 +106,7 @@ class Babytree
         $main_category = array();
 
         $regex = '/var\s+dropdown\s+=\s+([^;]+)/s';
-        $html = $this->_adapter_goutte->getWholeHtmlPage();
+        $html = $this->adapter_goutte->getWholeHtmlPage();
         $is_match = preg_match($regex, $html, $matches);
         if ($is_match > 0)
         {

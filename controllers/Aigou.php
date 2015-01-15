@@ -6,30 +6,13 @@
  * Time: 下午3:48
  */
 
-require_once '../models/Goutte_Crawl.php';
-require_once '../models/DBTableFactory.php';
-class Aigou
+require_once 'Crawl_Base.php';
+class Aigou extends Crawl_Base
 {
-    /**
-     * @var Goutte_Crawl
-     */
-    private $_adapter_goutte;
-    /**
-     * @var DBTableFactory
-     */
-    private $_adapter_db;
-    private $_crawl_urls;
-    private $_table_names;
-
     public function __construct()
     {
-        set_time_limit(0);
-        $this->_adapter_goutte = new Goutte_Crawl();
-        $this->_adapter_db = new DBTableFactory();
-        $this->_crawl_urls = [
-
-        ];
-        $this->_table_names = [
+        parent::__construct();
+        $this->table_names = [
             'province' => 'aigou_province',
             'hospital' => 'aigou_hospital',
             'hospital_info' => 'aigou_hospital_info'
@@ -49,7 +32,7 @@ class Aigou
             $province_data = [
                 'ap_name' => $province_name
             ];
-            $this->_adapter_db->insert($this->_table_names['province'], $province_data);
+            $this->adapter_db->insert($this->table_names['province'], $province_data);
             $total_data = $this->_getHospitalPageNum($all_province_data['url'][$province_key]);
             $total_page = 1;
             if (!empty($total_data))
@@ -65,7 +48,7 @@ class Aigou
                     'ah_name' => $hospital_name,
                     'ah_url' => $all_hospital_data['url'][$hospital_key]
                 ];
-                $this->_adapter_db->insert($this->_table_names['hospital'], $hospital_data);
+                $this->adapter_db->insert($this->table_names['hospital'], $hospital_data);
                 $hospital_info = $this->_getHospitalInfo($all_hospital_data['url'][$hospital_key]);
                 //address phone detail
                 if (!empty($hospital_info))
@@ -81,7 +64,7 @@ class Aigou
                                 str_replace('联系方式：', '', $hospital_info['phone'][0]) : '',
                         'ahi_intro' => isset($hospital_info['detail'][0]) ? $hospital_info['detail'][0] : ''
                     ];
-                    $this->_adapter_db->insert($this->_table_names['hospital_info'], $hospital_info_data);
+                    $this->adapter_db->insert($this->table_names['hospital_info'], $hospital_info_data);
                 }
             }
         }
@@ -91,13 +74,13 @@ class Aigou
     {
         $province_css_selector = 'div.city-all ul.city-list li a';
         $url = 'http://hospital.aigou.com/hospitallist_1__.html';
-        $this->_adapter_goutte->sendRequest($url);
+        $this->adapter_goutte->sendRequest($url);
         $hospital_data = [
             'name' => '',
             'url' => ''
         ];
-        $hospital_data['name'] = $this->_adapter_goutte->getText($province_css_selector);
-        $hospital_data['url'] = $this->_adapter_goutte->getHrefAttr($province_css_selector);
+        $hospital_data['name'] = $this->adapter_goutte->getText($province_css_selector);
+        $hospital_data['url'] = $this->adapter_goutte->getHrefAttr($province_css_selector);
         $hospital_data['url'] = array_map(
             function($url){
                 if($url != ''){
@@ -115,8 +98,8 @@ class Aigou
     private function _getHospitalPageNum($province_url)
     {
         $page_css_selector = 'div.page-nav ul li a';
-        $this->_adapter_goutte->sendRequest($province_url);
-        $page_content = $this->_adapter_goutte->getText($page_css_selector);
+        $this->adapter_goutte->sendRequest($province_url);
+        $page_content = $this->adapter_goutte->getText($page_css_selector);
         /*print_r($page_content);
         exit;*/
 
@@ -132,15 +115,15 @@ class Aigou
             if ($i != 1)
             {
                 $url = str_replace('_1_', '_' . $i . '_', $url);
-                $this->_adapter_goutte->sendRequest($url);
+                $this->adapter_goutte->sendRequest($url);
             }
 
             $hospital_data = [
                 'name' => '',
                 'url' => ''
             ];
-            $hospital_data['name'] = $this->_adapter_goutte->getText($hospital_name_css_selector);
-            $hospital_data['url'] = $this->_adapter_goutte->getHrefAttr($hospital_name_css_selector);
+            $hospital_data['name'] = $this->adapter_goutte->getText($hospital_name_css_selector);
+            $hospital_data['url'] = $this->adapter_goutte->getHrefAttr($hospital_name_css_selector);
             $hospital_data['url'] = array_map(
                 function($url){
                     if($url != ''){
@@ -163,15 +146,15 @@ class Aigou
         $address_css_selector = 'div.table div.tr div.td p.mt5';
         $phone_css_selector = 'div.table div.tr div.td p.mt8';
         $detail_css_selector = 'div.table div.tr div.td div.mt10.t-i.lh15.fs14';
-        $this->_adapter_goutte->sendRequest($hospital_url);
+        $this->adapter_goutte->sendRequest($hospital_url);
         $data = [
             'address' => '',
             'phone' => '',
             'detail' => ''
         ];
-        $data['address'] = $this->_adapter_goutte->getText($address_css_selector);
-        $data['phone'] = $this->_adapter_goutte->getText($phone_css_selector);
-        $data['detail'] = $this->_adapter_goutte->getText($detail_css_selector);
+        $data['address'] = $this->adapter_goutte->getText($address_css_selector);
+        $data['phone'] = $this->adapter_goutte->getText($phone_css_selector);
+        $data['detail'] = $this->adapter_goutte->getText($detail_css_selector);
         /*print_r($data);
         exit;*/
 

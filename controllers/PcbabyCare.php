@@ -5,31 +5,18 @@
  * Date: 14-12-11
  * Time: 下午2:59
  */
-require_once '../models/Goutte_Crawl.php';
-require_once '../models/DBTableFactory.php';
-class Pcbaby_Care
+require_once 'Crawl_Base.php';
+class Pcbaby_Care extends Crawl_Base
 {
-    /**
-     * @var Goutte_Crawl
-     */
-    private $_adapter_goutte;
-    /**
-     * @var DBTableFactory
-     */
-    private $_adapter_db;
-    private $_crawl_urls;
-    private $_table_names;
-
     public function __construct()
     {
-        $this->_adapter_goutte = new Goutte_Crawl();
-        $this->_adapter_db = new DBTableFactory();
-        $this->_crawl_urls = [
+        parent::__construct();
+        $this->crawl_urls = [
             1 => 'http://yuer.pcbaby.com.cn/yinger/huli/', //age between 0 and 1
             2 => 'http://yuer.pcbaby.com.cn/youer/huli/', //age between 1 and 3
             3 => 'http://yuer.pcbaby.com.cn/xuelingqian/huli/' //age between 3 and 6
         ];
-        $this->_table_names = [
+        $this->table_names = [
             'article' => 'pcbaby_care_article',
             'content' => 'pcbaby_care_article_content'
         ];
@@ -38,17 +25,17 @@ class Pcbaby_Care
     public function run()
     {
         $needle = 'http://yuer.pcbaby.com.cn';
-        foreach ($this->_crawl_urls as $crawl_key => $crawl_url)
+        foreach ($this->crawl_urls as $crawl_key => $crawl_url)
         {
-            $this->_adapter_goutte->sendRequest($crawl_url);
+            $this->adapter_goutte->sendRequest($crawl_url);
             $total_page = $this->_getTotalPage();
             for ($i = 0; $i < $total_page; $i++)
             {
-                $this->_adapter_goutte->setFakeHeaderIP();
+                $this->adapter_goutte->setFakeHeaderIP();
                 if ($i != 0)
                 {
                     $url = $crawl_url . '/index_' . $i . '.html';
-                    $this->_adapter_goutte->sendRequest($url);
+                    $this->adapter_goutte->sendRequest($url);
                 }
 
                 $crawl_article_data = $this->_getArticleTitleAndUrl();
@@ -67,7 +54,7 @@ class Pcbaby_Care
                             'pca_update_time' => date('Y-m-d H:i:s')
                         ];
 
-                        $pca_id = $this->_adapter_db->insert($this->_table_names['article'], $article_data);
+                        $pca_id = $this->adapter_db->insert($this->table_names['article'], $article_data);
                         if ($pca_id > 0)
                         {
                             $article_content = $this->_getArticleDetail($article_url);
@@ -85,7 +72,7 @@ class Pcbaby_Care
                                 'pcac_create_time' => date('Y-m-d H:i:s'),
                                 'pcac_update_time' => date('Y-m-d H:i:s')
                             ];
-                            $this->_adapter_db->insert($this->_table_names['content'], $article_content_data);
+                            $this->adapter_db->insert($this->table_names['content'], $article_content_data);
                         }
                     }
                 }
@@ -96,7 +83,7 @@ class Pcbaby_Care
     private function _getTotalPage()
     {
         $total_page_css_selector = '#pages.pcbaby_page a';
-        $total_page_data = $this->_adapter_goutte->getText($total_page_css_selector);
+        $total_page_data = $this->adapter_goutte->getText($total_page_css_selector);
         $total_page = 1;
         for ($i = count($total_page_data) - 1; $i >= 0; $i--)
         {
@@ -113,8 +100,8 @@ class Pcbaby_Care
     private function _getArticleTitleAndUrl()
     {
         $article_css_selector = 'p.aList-title a';
-        $titles = $this->_adapter_goutte->getText($article_css_selector);
-        $urls = $this->_adapter_goutte->getHrefAttr($article_css_selector);
+        $titles = $this->adapter_goutte->getText($article_css_selector);
+        $urls = $this->adapter_goutte->getHrefAttr($article_css_selector);
         return [
             'title' => $titles,
             'url' => $urls
@@ -132,11 +119,11 @@ class Pcbaby_Care
             $full_article_content_url = $url;
         }
 
-        $this->_adapter_goutte->sendRequest($full_article_content_url);
+        $this->adapter_goutte->sendRequest($full_article_content_url);
         $article_tags_css_selector = 'span.artLabel-title a';
-        $tags = $this->_adapter_goutte->getText($article_tags_css_selector);
+        $tags = $this->adapter_goutte->getText($article_tags_css_selector);
         $content_css_selector = 'div.artText';
-        $content = $this->_adapter_goutte->getHtml($content_css_selector);
+        $content = $this->adapter_goutte->getHtml($content_css_selector);
         $content = isset($content[0]) ? $content[0] : '';
 
         return [

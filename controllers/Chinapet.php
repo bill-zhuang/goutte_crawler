@@ -6,28 +6,15 @@
  * Time: 下午3:29
  */
 
-require_once '../models/Goutte_Crawl.php';
-require_once '../models/DBTableFactory.php';
-class Chinapet
+require_once 'Crawl_Base.php';
+class Chinapet extends Crawl_Base
 {
-    /**
-     * @var Goutte_Crawl
-     */
-    private $_adapter_goutte;
-    /**
-     * @var DBTableFactory
-     */
-    private $_adapter_db;
-    private $_crawl_urls;
     private $_post_limit;
-    private $_table_names;
 
     public function __construct()
     {
-        set_time_limit(0);
-        $this->_adapter_goutte = new Goutte_Crawl();
-        $this->_adapter_db = new DBTableFactory();
-        $this->_crawl_urls = [
+        parent::__construct();
+        $this->crawl_urls = [
             'dog' => [
                 '汪星人' => 'http://bbs.chinapet.com/forum-496-1.html',
                 '金毛' => 'http://bbs.chinapet.com/forum-47-1.html',
@@ -60,7 +47,7 @@ class Chinapet
             ]
         ];
         $this->_post_limit = 100;
-        $this->_table_names = [
+        $this->table_names = [
             'main_category' => 'chinapet_main_category',
             'sub_category' => 'chinapet_sub_category',
             'post' => 'chinapet_post',
@@ -75,12 +62,12 @@ class Chinapet
 
     private function _crawlPost()
     {
-        foreach ($this->_crawl_urls as $category => $content)
+        foreach ($this->crawl_urls as $category => $content)
         {
             $main_category_data = [
                 'cmc_name' => $category
             ];
-            $this->_adapter_db->insert($this->_table_names['main_category'], $main_category_data);
+            $this->adapter_db->insert($this->table_names['main_category'], $main_category_data);
             foreach ($content as $animal => $url)
             {
                 $sub_category_data = [
@@ -88,7 +75,7 @@ class Chinapet
                     'csc_name' => $animal,
                     'csc_url' => $url
                 ];
-                $this->_adapter_db->insert($this->_table_names['sub_category'], $sub_category_data);
+                $this->adapter_db->insert($this->table_names['sub_category'], $sub_category_data);
                 $total_page = 1;
                 $total_data = $this->_getPageNum($url);
                 if (!empty($total_data))
@@ -105,7 +92,7 @@ class Chinapet
                         'cp_name' => $post_name,
                         'cp_url' => $all_post_data['url'][$post_key]
                     ];
-                    $this->_adapter_db->insert($this->_table_names['post'], $post_data);
+                    $this->adapter_db->insert($this->table_names['post'], $post_data);
                     $post_info = $this->_getPostInfo($all_post_data['url'][$post_key]);
                     //post detail
                     if (!empty($post_info))
@@ -119,7 +106,7 @@ class Chinapet
                             'cpi_content' => $post_info['content'],
                             'cpi_image' => $post_info['image']
                         ];
-                        $this->_adapter_db->insert($this->_table_names['post_info'], $post_info_data);
+                        $this->adapter_db->insert($this->table_names['post_info'], $post_info_data);
                     }
                 }
             }
@@ -129,8 +116,8 @@ class Chinapet
     private function _getPageNum($url)
     {
         $page_css_selector = 'div.bm.bw0.pgs.cl span#fd_page_bottom div.pg a.last';
-        $this->_adapter_goutte->sendRequest($url);
-        $page_content = $this->_adapter_goutte->getText($page_css_selector);
+        $this->adapter_goutte->sendRequest($url);
+        $page_content = $this->adapter_goutte->getText($page_css_selector);
         $page_content = array_map(
             function($str){
                 return str_replace('.', '', $str);
@@ -161,15 +148,15 @@ class Chinapet
             if ($i != 1)
             {
                 $visit_url = str_replace('-1.html', '-' . $i . '.html', $url);
-                $this->_adapter_goutte->sendRequest($visit_url);
+                $this->adapter_goutte->sendRequest($visit_url);
             }
 
             $post_data = [
                 'name' => [],
                 'url' => []
             ];
-            $post_data['name'] = $this->_adapter_goutte->getText($post_name_css_selector);
-            $post_data['url'] = $this->_adapter_goutte->getHrefAttr($post_name_css_selector);
+            $post_data['name'] = $this->adapter_goutte->getText($post_name_css_selector);
+            $post_data['url'] = $this->adapter_goutte->getHrefAttr($post_name_css_selector);
             /*print_r($post_data);
             exit;*/
 
@@ -199,11 +186,11 @@ class Chinapet
             if ($i != 1)
             {
                 $actual_url = str_replace('1-1.html', $i . '-1.html', $post_url);
-                $this->_adapter_goutte->sendRequest($actual_url);
+                $this->adapter_goutte->sendRequest($actual_url);
             }
 
-            $post_data = $this->_adapter_goutte->getText($detail_css_selector);
-            $image_data = $this->_adapter_goutte->getAttrByName($image_css_selector, 'file');
+            $post_data = $this->adapter_goutte->getText($detail_css_selector);
+            $image_data = $this->adapter_goutte->getAttrByName($image_css_selector, 'file');
             $data['content'] = array_merge($data['content'], $post_data);
             $data['image'] = array_merge($data['image'], array_filter($image_data));
         }
@@ -216,8 +203,8 @@ class Chinapet
     private function _getPostPage($post_url)
     {
         $page_css_selector = 'div.pg label span';
-        $this->_adapter_goutte->sendRequest($post_url);
-        $page_content = $this->_adapter_goutte->getText($page_css_selector);
+        $this->adapter_goutte->sendRequest($post_url);
+        $page_content = $this->adapter_goutte->getText($page_css_selector);
         $page_content = array_map(
             function($str){
                 $is_match = preg_match('/(\d+)/', $str, $matches);

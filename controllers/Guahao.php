@@ -6,29 +6,13 @@
  * Time: 下午3:05
  */
 
-require_once '../models/Goutte_Crawl.php';
-require_once '../models/DBTableFactory.php';
-class Guahao
+require_once 'Crawl_Base.php';
+class Guahao extends Crawl_Base
 {
-    /**
-     * @var Goutte_Crawl
-     */
-    private $_adapter_goutte;
-    /**
-     * @var DBTableFactory
-     */
-    private $_adapter_db;
-    private $_crawl_urls;
-    private $_table_names;
-
     public function __construct()
     {
-        $this->_adapter_goutte = new Goutte_Crawl();
-        $this->_adapter_db = new DBTableFactory();
-        $this->_crawl_urls = [
-
-        ];
-        $this->_table_names = [
+        parent::__construct();
+        $this->table_names = [
             'province' => 'guahao_province',
             'city' => 'guahao_city',
             'hospital' => 'guahao_hospital',
@@ -52,7 +36,7 @@ class Guahao
                 'gp_name' => $province_name,
                 'gp_province_id' => $prid
             ];
-            $this->_adapter_db->insert($this->_table_names['province'], $province_data);
+            $this->adapter_db->insert($this->table_names['province'], $province_data);
             foreach ($location_value['cities'] as $city_value)
             {
                 $ctid = $city_value['areaId'];
@@ -64,7 +48,7 @@ class Guahao
                         'gc_city_id' => $ctid,
                         'gc_province_id' => $prid
                     ];
-                    $this->_adapter_db->insert($this->_table_names['city'], $city_data);
+                    $this->adapter_db->insert($this->table_names['city'], $city_data);
 
                     $encode_province_name = rawurlencode($province_name);
                     $encode_city_name = rawurlencode($city_name);
@@ -83,7 +67,7 @@ class Guahao
                                 'gh_name' => $hospital_name,
                                 'gh_url' => $hospital_url
                             ];
-                            $this->_adapter_db->insert($this->_table_names['hospital'], $hospital_data);
+                            $this->adapter_db->insert($this->table_names['hospital'], $hospital_data);
                             $hospital_id = str_replace('http://www.guahao.com/hospital/', '', $hospital_url);
                             $hospital_info = $this->_getHospitalInfo($hospital_id);
                             //address phone detail
@@ -100,7 +84,7 @@ class Guahao
                                     'ghi_phone' => isset($hospital_info['phone'][0]) ? $hospital_info['phone'][0] : '',
                                     'ghi_intro' => isset($hospital_info['detail'][0]) ? $hospital_info['detail'][0] : ''
                                 ];
-                                $this->_adapter_db->insert($this->_table_names['hospital_info'], $hospital_info_data);
+                                $this->adapter_db->insert($this->table_names['hospital_info'], $hospital_info_data);
                             }
                         }
                     }
@@ -159,8 +143,8 @@ class Guahao
         $page_css_selector = 'div.other-info span.pd label';
         $url = 'http://www.guahao.com/hospital/areahospitals?sort=0&q=&pi=%s&p=%s&ci=%s&c=%s&pageNo=1';
         $url = sprintf($url, $prid, $province_name, $ctid, $city_name);
-        $this->_adapter_goutte->sendRequest($url);
-        $page_content = $this->_adapter_goutte->getText($page_css_selector);
+        $this->adapter_goutte->sendRequest($url);
+        $page_content = $this->adapter_goutte->getText($page_css_selector);
         /*print_r($page_content);
         exit;*/
 
@@ -179,13 +163,13 @@ class Guahao
         {
             if ($i != 1)
             {
-                $this->_adapter_goutte->setFakeHeaderIP();
+                $this->adapter_goutte->setFakeHeaderIP();
                 $real_url = sprintf($url, $prid, $province_name, $ctid, $city_name, $i);
-                $this->_adapter_goutte->sendRequest($real_url);
+                $this->adapter_goutte->sendRequest($real_url);
             }
 
-            $name_content = $this->_adapter_goutte->getText($hospital_name_css_selector);
-            $url_content = $this->_adapter_goutte->getHrefAttr($hospital_name_css_selector);
+            $name_content = $this->adapter_goutte->getText($hospital_name_css_selector);
+            $url_content = $this->adapter_goutte->getHrefAttr($hospital_name_css_selector);
             /*print_r($name_content);
             print_r($url_content);
             exit;*/
@@ -202,14 +186,14 @@ class Guahao
         $address_css_selector = 'p.introduce-ads span';
         $phone_css_selector = 'p.introduce-tel span';
         $url = 'http://www.guahao.com/hospital/' . $hospital_id;
-        $this->_adapter_goutte->sendRequest($url);
+        $this->adapter_goutte->sendRequest($url);
         $data = [
             'address' => '',
             'phone' => '',
             'detail' => ''
         ];
-        $data['address'] = $this->_adapter_goutte->getText($address_css_selector);
-        $data['phone'] = $this->_adapter_goutte->getText($phone_css_selector);
+        $data['address'] = $this->adapter_goutte->getText($address_css_selector);
+        $data['phone'] = $this->adapter_goutte->getText($phone_css_selector);
         $data['detail'] = $this->_getHospitalDetail($hospital_id);
 
         return $data;
@@ -219,8 +203,8 @@ class Guahao
     {
         $desc_css_selector = 'div.g-grid2-l div.hosp-info-mask div.info';
         $url = 'http://www.guahao.com/hospital/desc/' . $hospital_id;
-        $this->_adapter_goutte->sendRequest($url);
-        $address_content = $this->_adapter_goutte->getHtml($desc_css_selector);
+        $this->adapter_goutte->sendRequest($url);
+        $address_content = $this->adapter_goutte->getHtml($desc_css_selector);
 
         return $address_content;
     }
