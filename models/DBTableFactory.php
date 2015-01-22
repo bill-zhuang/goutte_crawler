@@ -18,9 +18,17 @@
  *          'email' => ['example1@example.com', 'example2@example.com', 'example3@example.com']
 *       ]
  * ]
- * ['name[~]' => 'bill'] //equal to name like %bill%
- * ['name[!~]' => 'bill'] //equal to name not like %bill%
- * ['name[~]' => 'bill%'] //equal to name like bill%
+ * [
+ *     'LIKE' => [
+ *         'name' => 'bill'
+ *     ] //equal to name like %bill%,
+ *     'LIKE' => [
+ *         '%name' => 'bill'
+ *     ] //equal to name like %bill
+ *     'LIKE' => [
+ *         'name[!]' => 'bill'
+ *     ] //equal to name not like %bill%
+ * ]
  *
  * order clause
  * ['ORDER' => 'age'] //equal to order by age desc
