@@ -18,4 +18,19 @@ class Util
 
         return implode('.', $ip_fields);
     }
+
+    public static function getAccount($forum_name)
+    {
+        $account_ini_path = '../config/account.ini';
+        if (file_exists($account_ini_path))
+        {
+            $account_config = parse_ini_file('../config/account.ini', true);
+            if (!empty($account_config[$forum_name]))
+            {
+                return $account_config[$forum_name];
+            }
+        }
+
+        return null;
+    }
 } 
