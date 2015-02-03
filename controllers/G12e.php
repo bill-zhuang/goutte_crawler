@@ -43,10 +43,10 @@ class G12e extends Crawl_Base
 
     public function run()
     {
-        $this->_crawlGradeAndCourse($this->_is_crontab);
+        $this->_crawlGradeAndCourse();
     }
 
-    private function _crawlGradeAndCourse($is_crontab = false)
+    private function _crawlGradeAndCourse()
     {
         /*$grade_css_selector = 'div.tabtit ul span.toptit';
         $grades = $this->adapter_goutte->getText($grade_css_selector);*/
@@ -62,7 +62,7 @@ class G12e extends Crawl_Base
             {
                 $coid = $this->_getCoid($course_name);
                 $course_url = $this->_url_prefix . $course_urls[$course_key];
-                $this->_crawlCourseExam($course_url, $grid, $coid, $is_crontab);
+                $this->_crawlCourseExam($course_url, $grid, $coid);
             }
         }
     }
@@ -115,7 +115,7 @@ class G12e extends Crawl_Base
         return $coid;
     }
 
-    private function _crawlCourseExam($course_url, $grid, $coid, $is_crontab = false)
+    private function _crawlCourseExam($course_url, $grid, $coid)
     {
         $crontab_flag = false;
         $this->adapter_goutte->sendRequest($course_url);
@@ -140,7 +140,7 @@ class G12e extends Crawl_Base
 
             foreach ($titles as $title_key => $title)
             {
-                if ($is_crontab)
+                if ($this->_is_crontab)
                 {
                     if ($this->adapter_db->selectCount($this->table_names['exam'], ['g1_title[=]' => $title]) == 0)
                     {
