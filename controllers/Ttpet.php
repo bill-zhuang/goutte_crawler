@@ -18,6 +18,7 @@ class Ttpet extends Crawl_Base
             'pet' => 'ttpet_pet',
             'pet_info' => 'ttpet_pet_info'
         ];
+        $this->url_prefix = 'http://www.ttpet.com';
     }
 
     public function run()
@@ -111,7 +112,7 @@ class Ttpet extends Crawl_Base
         $url_content = array_map(
             function($url) {
                 if (isset($url)) {
-                    return 'http://www.ttpet.com' . $url;
+                    return $this->url_prefix . $url;
                 }
             },
             $url_content
@@ -166,7 +167,7 @@ class Ttpet extends Crawl_Base
             $all_pet_data['url'] = array_map(
                 function($url) {
                     if ($url != '') {
-                        return 'http://www.ttpet.com' . $url;
+                        return $this->url_prefix . $url;
                     }
                 },
                 $all_pet_data['url']

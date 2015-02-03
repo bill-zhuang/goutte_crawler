@@ -17,6 +17,7 @@ class Aigou extends Crawl_Base
             'hospital' => 'aigou_hospital',
             'hospital_info' => 'aigou_hospital_info'
         ];
+        $this->url_prefix = 'http://hospital.aigou.com/';
     }
 
     public function run()
@@ -84,7 +85,7 @@ class Aigou extends Crawl_Base
         $hospital_data['url'] = array_map(
             function($url){
                 if($url != ''){
-                    return 'http://hospital.aigou.com/' . $url;
+                    return $this->url_prefix . $url;
                 }
             },
             $hospital_data['url']
@@ -127,7 +128,7 @@ class Aigou extends Crawl_Base
             $hospital_data['url'] = array_map(
                 function($url){
                     if($url != ''){
-                        return 'http://hospital.aigou.com/' . $url;
+                        return $this->url_prefix . $url;
                     }
                 },
                 $hospital_data['url']

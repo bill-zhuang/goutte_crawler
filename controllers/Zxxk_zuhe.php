@@ -4,7 +4,6 @@ require_once 'Crawl_Base.php';
 class Zxxk_zuhe extends Crawl_Base
 {
     private $_cookie_path;
-    private $_url_prefix;
 
     public function __construct()
     {
@@ -17,7 +16,7 @@ class Zxxk_zuhe extends Crawl_Base
             'exam' => 'zxxk_zuhe'
         ];
         $this->_cookie_path = '../cookie/zxxk_zuhe_cookie.txt';
-        $this->_url_prefix = 'http://zuhe.zxxk.com';
+        $this->url_prefix = 'http://zuhe.zxxk.com';
     }
 
     public function run()
@@ -44,7 +43,7 @@ class Zxxk_zuhe extends Crawl_Base
         $free_exam_url = '';
         if (!empty($combine_urls))
         {
-            $free_exam_url = $this->_url_prefix . $combine_urls[$free_exam_key];
+            $free_exam_url = $this->url_prefix . $combine_urls[$free_exam_key];
         }
 
         return $free_exam_url;
@@ -66,7 +65,7 @@ class Zxxk_zuhe extends Crawl_Base
                     foreach ($categories['province']['names'] as $province_name_key => $province_name)
                     {
                         $prid = $this->_getPrid($province_name);
-                        $visit_url = $this->_url_prefix . $categories['category']['urls'][$category_name_key];
+                        $visit_url = $this->url_prefix . $categories['category']['urls'][$category_name_key];
                         $is_match = preg_match($preg_province_id, $categories['province']['urls'][$province_name_key], $matches);
                         if ($is_match)
                         {
@@ -204,7 +203,7 @@ class Zxxk_zuhe extends Crawl_Base
                 $insert_data['zz_download_url'] = $download_url;
                 $insert_data['zz_file_type'] = trim(str_replace('it_1 ', '', $exam_types[$exam_key]));
                 $insert_data['zz_content'] = '';
-                $insert_data['zz_url'] = $this->_url_prefix . $exam_urls[$exam_key];
+                $insert_data['zz_url'] = $this->url_prefix . $exam_urls[$exam_key];
                 $this->adapter_db->insert($this->table_names['exam'], $insert_data);
             }
         }

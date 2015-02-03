@@ -20,6 +20,7 @@ class Izaojiao extends Crawl_Base
             'institution' => 'izaojiao_institution',
             'institution_info' => 'izaojiao_institution_info'
         ];
+        $this->url_prefix = 'http://www.izaojiao.com';
     }
 
     public function run()
@@ -78,7 +79,7 @@ class Izaojiao extends Crawl_Base
         $institution_url = '';
         foreach ($institution_names as $key => $institution_name)
         {
-            $institution_url = 'http://www.izaojiao.com' . $institution_urls[$key];
+            $institution_url = $this->url_prefix . $institution_urls[$key];
             $institution_data = [
                 'ii_url' => $institution_url,
                 'ii_name' => $institution_name,
@@ -101,7 +102,7 @@ class Izaojiao extends Crawl_Base
 
         $this->adapter_goutte->sendRequest($institution_url);
         $logo_info = $this->adapter_goutte->getImageSrcAttr($logo_css_selector);
-        $logo = 'http://www.izaojiao.com' . $logo_info[0];
+        $logo = $this->url_prefix . $logo_info[0];
         $info1 = $this->adapter_goutte->getText($info1_css_selector);
         $info2 = $this->adapter_goutte->getText($info2_css_selector);
 

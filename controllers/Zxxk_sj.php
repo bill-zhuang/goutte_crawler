@@ -4,7 +4,6 @@ require_once 'Crawl_Base.php';
 class Zxxk_sj extends Crawl_Base
 {
     private $_cookie_path;
-    private $_url_prefix;
 
     public function __construct()
     {
@@ -19,7 +18,7 @@ class Zxxk_sj extends Crawl_Base
             'exam' => 'zxxk_sj'
         ];
         $this->_cookie_path = '../cookie/zxxk_sj_cookie.txt';
-        $this->_url_prefix = 'http://sj.zxxk.com';
+        $this->url_prefix = 'http://sj.zxxk.com';
     }
 
     public function run()
@@ -47,7 +46,7 @@ class Zxxk_sj extends Crawl_Base
             if ($course_url != '/Default.aspx')
             {
                 $coid = $this->_getCoid($course_names[$course_key]);
-                $course_url = $this->_url_prefix . $course_url;
+                $course_url = $this->url_prefix . $course_url;
                 $this->adapter_goutte->sendRequest($course_url);
                 $categories = $this->_getGradesProvincesYears();
                 $free_charge_url = $this->_getExamMoney();
@@ -67,7 +66,7 @@ class Zxxk_sj extends Crawl_Base
                                 $visit_url = preg_replace($preg_grad_id, '\1-' . $grid_matches[2] . '\3-' . $grid_matches[4], $visit_url);
                                 $visit_url = preg_replace($preg_province_id, '\1-' . $prid_matches[2], $visit_url);
 
-                                $visit_url = $this->_url_prefix . $visit_url;
+                                $visit_url = $this->url_prefix . $visit_url;
                                 //crawl exam paper
                                 $this->adapter_goutte->sendRequest($visit_url);
                                 $total_pages = $this->_getTotalPage();
@@ -204,7 +203,7 @@ class Zxxk_sj extends Crawl_Base
                 $insert_data['zs_download_url'] = $download_url;
                 $insert_data['zs_file_type'] = trim(str_replace('it_1 ', '', $exam_types[$exam_key]));
                 $insert_data['zs_content'] = '';
-                $insert_data['zs_url'] = $this->_url_prefix . $exam_urls[$exam_key];
+                $insert_data['zs_url'] = $this->url_prefix . $exam_urls[$exam_key];
                 $this->adapter_db->insert($this->table_names['exam'], $insert_data);
             }
         }

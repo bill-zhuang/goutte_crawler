@@ -9,7 +9,6 @@
 require_once 'Crawl_Base.php';
 class G12e extends Crawl_Base
 {
-    private $_url_prefix;
     private $_provinces;
     private $_is_crontab;
     private $_grade_prefix_css_selectors;
@@ -26,7 +25,7 @@ class G12e extends Crawl_Base
             'course' => 'course',
             'exam' => 'g12e'
         ];
-        $this->_url_prefix = 'http://www.g12e.com';
+        $this->url_prefix = 'http://www.g12e.com';
         $this->_is_crontab = boolval($is_crontab);
         $this->_grade_prefix_css_selectors = [
             '中考' => 'div#Tab1.index-zkst',
@@ -61,7 +60,7 @@ class G12e extends Crawl_Base
             foreach ($course_names as $course_key => $course_name)
             {
                 $coid = $this->_getCoid($course_name);
-                $course_url = $this->_url_prefix . $course_urls[$course_key];
+                $course_url = $this->url_prefix . $course_urls[$course_key];
                 $this->_crawlCourseExam($course_url, $grid, $coid);
             }
         }
@@ -149,7 +148,7 @@ class G12e extends Crawl_Base
                     }
                 }
 
-                $exam_url = $this->_url_prefix . $urls[$title_key];
+                $exam_url = $this->url_prefix . $urls[$title_key];
                 $prid = $this->_getPrid($title);
                 $exam_content = $this->_getExamContent($exam_url);
                 $download_url = (substr($exam_content, -3) == 'doc') ? $exam_content : '';
@@ -205,7 +204,7 @@ class G12e extends Crawl_Base
             {
                 if (substr($exam_doc_url, 0, 4) != 'http')
                 {
-                    $exam_doc_url = $this->_url_prefix . $exam_doc_url;
+                    $exam_doc_url = $this->url_prefix . $exam_doc_url;
                 }
                 return $exam_doc_url;
             }
