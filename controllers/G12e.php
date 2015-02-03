@@ -13,7 +13,7 @@ class G12e extends Crawl_Base
     private $_is_crontab;
     private $_grade_prefix_css_selectors;
 
-    public function __construct($is_crontab)
+    public function __construct()
     {
         parent::__construct();
         $this->crawl_urls = [
@@ -26,7 +26,7 @@ class G12e extends Crawl_Base
             'exam' => 'g12e'
         ];
         $this->url_prefix = 'http://www.g12e.com';
-        $this->_is_crontab = boolval($is_crontab);
+        $this->_is_crontab = false;
         $this->_grade_prefix_css_selectors = [
             '中考' => 'div#Tab1.index-zkst',
             '高考' => 'div#Tab2.index-zkst',
@@ -42,6 +42,13 @@ class G12e extends Crawl_Base
 
     public function run()
     {
+        $this->_is_crontab = false;
+        $this->_crawlGradeAndCourse();
+    }
+
+    public function runCrontab()
+    {
+        $this->_is_crontab = true;
         $this->_crawlGradeAndCourse();
     }
 
@@ -169,7 +176,7 @@ class G12e extends Crawl_Base
                 $this->adapter_db->insert($this->table_names['exam'], $insert_exam_data);
             }
 
-            if ($is_crontab && $crontab_flag)
+            if ($this->_is_crontab && $crontab_flag)
             {
                 break;
             }
@@ -269,5 +276,5 @@ class G12e extends Crawl_Base
 
 }
 
-$test = new G12e(false);
+$test = new G12e();
 $test->run();
