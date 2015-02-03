@@ -34,6 +34,11 @@ class Goutte_Crawl
         $this->_goutte_crawler = $this->_goutte_client->request($method, $url);
     }
 
+    public function getRedirectUrl()
+    {
+        return $this->_goutte_client->getHistory()->current()->getUri();
+    }
+
     public function getWholeHtmlPage()
     {
         $this->_isCrawlerInit();
@@ -107,6 +112,16 @@ class Goutte_Crawl
         $fake_ip = Util::generateFakeIP();
         $this->_goutte_client->getClient()->setDefaultOption('headers/CLIENT-IP', $fake_ip);
         $this->_goutte_client->getClient()->setDefaultOption('headers/X-FORWARDED-FOR', $fake_ip);
+    }
+
+    public function getCookie($name, $path = '/', $domain = null)
+    {
+        return $this->_goutte_client->getCookieJar()->get($name, $path, $domain);
+    }
+
+    public function setCookie($cookie)
+    {
+        $this->_goutte_client->getCookieJar()->set($cookie);
     }
 
     private function _isCrawlerInit()
