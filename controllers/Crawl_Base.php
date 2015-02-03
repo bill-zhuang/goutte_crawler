@@ -21,6 +21,7 @@ class Crawl_Base
     public $adapter_db;
     public $crawl_urls;
     public $table_names;
+    public $url_prefix;
 
     public function __construct()
     {
@@ -29,6 +30,7 @@ class Crawl_Base
         $this->adapter_db = new DBTableFactory();
         $this->crawl_urls = [];
         $this->table_names = [];
+        $this->url_prefix = '';
     }
 
     /*
