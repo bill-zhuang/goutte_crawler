@@ -64,14 +64,19 @@ class Download
     }
 
     /**
-    * Download file through multi-thread by curl.
-    * @param array $download_urls
-    * <p>key-filename, value-url.</p>
-    * @param string $dir
-    * <p>directory to save the files.</p>
-    * @param integer $download_number [optinal]
-    * <p>download files at one time, default 100.</p>*/
-    public function curlMultipleDownloadToDisk(array $download_urls, $dir, $download_number = 100)
+     * Download file through multi-thread by curl.
+     * @param array $download_urls
+     * <p>key-filename, value-url.</p>
+     * @param $dir
+     * <p>directory to save the files.</p>
+     * @param int $download_number [optional]
+     * <p>download files at one time, default 100.</p>
+     * @param bool $is_sleep [optional]
+     * <p>sleep trigger, default false.</p>
+     * @param int $sleep_seconds [optional]
+     * <p>sleep seconds, default 1.</p>
+     */
+    public function curlMultipleDownloadToDisk(array $download_urls, $dir, $download_number = 100, $is_sleep = false, $sleep_seconds = 1)
     {
         if(!file_exists($dir))
         {
