@@ -252,6 +252,7 @@ class G12e extends Crawl_Base
         $download = new Download();
 
         $fetch_fields = [
+            'g1_id',
             'g1_download_url',
         ];
         $where = [
@@ -267,7 +268,8 @@ class G12e extends Crawl_Base
             $download_arr = [];
             foreach ($download_data as $download_value)
             {
-                $download_arr[basename($download_value['g1_download_url'])] = $download_value['g1_download_url'];
+                $doc_name = $download_value['g1_id'] . '.' . pathinfo($download_value['g1_download_url'], PATHINFO_EXTENSION);
+                $download_arr[$doc_name] = $download_value['g1_download_url'];
             }
 
             $download->curlMultipleDownloadToDisk($download_arr, $save_dir);
