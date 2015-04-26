@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-1-30
- * Time: 下午4:29
- */
 
 require_once 'Crawl_Base.php';
 class Kejian extends Crawl_Base

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-12-16
- * Time: 下午2:38
- */
 
 /*
  * WARNING!!! untested & finished

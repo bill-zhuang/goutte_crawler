@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-12-3
- * Time: 上午11:39
- */
 
 class Util
 {

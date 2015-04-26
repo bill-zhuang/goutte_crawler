@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-2-3
- * Time: 下午2:05
- */
 
 require_once 'Crawl_Base.php';
 class Shiti123 extends Crawl_Base

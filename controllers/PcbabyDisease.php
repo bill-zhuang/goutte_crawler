@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-12-3
- * Time: 下午1:46
- */
+
 require_once 'Crawl_Base.php';
 class Pcbaby_Disease extends Crawl_Base
 {

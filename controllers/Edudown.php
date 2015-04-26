@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-2-4
- * Time: 上午10:51
- */
 
 require_once 'Crawl_Base.php';
 class Edudown extends Crawl_Base

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-2-3
- * Time: 下午3:03
- */
 
 require_once 'Crawl_Base.php';
 class Szxuexiao extends Crawl_Base

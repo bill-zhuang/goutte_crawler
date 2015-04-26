@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-2-4
- * Time: 下午3:39
- */
 
 require_once 'Crawl_Base.php';
 class Aoshu extends Crawl_Base

@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-12-3
- * Time: 上午11:10
- */
+
 use Goutte\Client;
 require_once '../library/goutte.phar';
 require_once 'Util.php';

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-12-16
- * Time: 下午2:21
- */
 
 require_once 'Crawl_Base.php';
 class Yaolan extends Crawl_Base

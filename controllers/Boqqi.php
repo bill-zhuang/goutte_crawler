@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-12-16
- * Time: 下午4:03
- */
 
 require_once 'Crawl_Base.php';
 class Boqqi extends Crawl_Base

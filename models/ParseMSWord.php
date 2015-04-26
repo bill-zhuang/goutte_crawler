@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-1-21
- * Time: 上午10:08
- */
 
 class ParseMSWord
 {

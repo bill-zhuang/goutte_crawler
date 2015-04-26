@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-12-16
- * Time: 下午3:05
- */
 
 require_once 'Crawl_Base.php';
 class Guahao extends Crawl_Base

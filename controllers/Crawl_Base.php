@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-1-13
- * Time: 上午11:32
- */
 
 require_once '../models/Goutte_Crawl.php';
 require_once '../models/DBTableFactory.php';

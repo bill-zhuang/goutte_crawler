@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-1-28
- * Time: 下午1:17
- */
 
 class Zxxk_captcha
 {

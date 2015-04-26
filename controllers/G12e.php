@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-1-13
- * Time: 上午11:31
- */
 
 require_once 'Crawl_Base.php';
 class G12e extends Crawl_Base

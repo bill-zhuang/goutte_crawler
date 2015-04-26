@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 14-12-16
- * Time: 上午10:28
- */
 
 /*
  * more detail, see http://medoo.in/api/where.
