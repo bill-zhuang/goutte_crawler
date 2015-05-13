@@ -18,7 +18,7 @@ class Goutte_Crawl
         $this->_methods = array('GET', 'POST');
     }
 
-    public function sendRequest($url, $method = 'GET')
+    public function sendRequest($url, $method = 'GET', $parameter = [])
     {
         $method = strtoupper($method);
         if (!in_array($method, $this->_methods))
@@ -26,7 +26,7 @@ class Goutte_Crawl
             $method = $this->_methods[0];
         }
 
-        $this->_goutte_crawler = $this->_goutte_client->request($method, $url);
+        $this->_goutte_crawler = $this->_goutte_client->request($method, $url, $parameter);
     }
 
     public function getRedirectUrl()
