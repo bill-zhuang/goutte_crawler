@@ -21,6 +21,7 @@ class LiaoxuefengPythonTutorial extends Crawl_Base
         $this->createDirectory($this->_save_dir);
         $content_list = $this->_getPythonTutorialContent();
         $this->_savePythonChapterContent($content_list);
+        $this->_saveIndexHtml();
     }
 
     private function _getPythonTutorialContent()
@@ -50,6 +51,20 @@ class LiaoxuefengPythonTutorial extends Crawl_Base
             );
             file_put_contents($this->_save_dir . $save_name, $chapter_html);
             $start++;
+        }
+    }
+
+    private function _saveIndexHtml()
+    {
+        $files = scandir($this->_save_dir);
+        $handle = fopen($this->_save_dir . '0. index.html', 'a+');
+        foreach ($files as $file)
+        {
+            if ($file != '.' && $file != '..')
+            {
+                $href_content = '<a href="' . $file . '">' . $file . '</a><br />';
+                fwrite($handle, $href_content);
+            }
         }
     }
 
