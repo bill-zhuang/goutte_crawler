@@ -34,4 +34,12 @@ class Crawl_Base
     {
 
     }
+
+    public function createDirectory($dir)
+    {
+        if ($dir !== '' && !is_dir($dir))
+        {
+            mkdir($dir, '0777', true);
+        }
+    }
 } 
