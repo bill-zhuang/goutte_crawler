@@ -147,7 +147,8 @@ class Guahao extends Crawl_Base
 
     private function _getHospital($prid, $province_name, $ctid, $city_name, $total_page_num)
     {
-        $hospital_name_css_selector = 'div.search-hos-info.g-clear dl dt a';
+        //$hospital_name_css_selector = 'div.search-hos-info.g-clear dl dt a';
+        $hospital_name_css_selector = 'div.hos-total.g-clear div.info.g-left dl dt a';
         $url = 'http://www.guahao.com/hospital/areahospitals?sort=0&q=&pi=%s&p=%s&ci=%s&c=%s&pageNo=%s';
         $data = [
             'name' => [],
@@ -177,8 +178,10 @@ class Guahao extends Crawl_Base
 
     private function _getHospitalInfo($hospital_id)
     {
-        $address_css_selector = 'p.introduce-ads span';
-        $phone_css_selector = 'p.introduce-tel span';
+        //$address_css_selector = 'p.introduce-ads span';
+        $address_css_selector = 'div.address span';
+        //$phone_css_selector = 'p.introduce-tel span';
+        $phone_css_selector = 'div.tel span';
         $url = 'http://www.guahao.com/hospital/' . $hospital_id;
         $this->adapter_goutte->sendRequest($url);
         $data = [
@@ -195,8 +198,10 @@ class Guahao extends Crawl_Base
 
     private function _getHospitalDetail($hospital_id)
     {
-        $desc_css_selector = 'div.g-grid2-l div.hosp-info-mask div.info';
-        $url = 'http://www.guahao.com/hospital/desc/' . $hospital_id;
+        //$desc_css_selector = 'div.g-grid2-l div.hosp-info-mask div.info';
+        $desc_css_selector = 'div.introduction-content';
+        //$url = 'http://www.guahao.com/hospital/desc/' . $hospital_id;
+        $url = 'http://www.guahao.com/hospital/introduction/' . $hospital_id;
         $this->adapter_goutte->sendRequest($url);
         $address_content = $this->adapter_goutte->getHtml($desc_css_selector);
 
